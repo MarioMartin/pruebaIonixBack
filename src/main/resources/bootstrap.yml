@@ -1,0 +1,36 @@
+%YAML 1.2
+---
+spring:
+    application:
+        name: "ionix-ms-pruebaTecnica"
+    cloud:
+        kubernetes:
+            reload:
+                enabled: false
+                mode: polling
+                period: 300000
+            config:
+                enabled: true
+                sources:
+                - name: ionix-ms-pruebaTecnica
+                - name: bbdd-context
+                - name: osb
+                - name: rest
+management:
+    endpoint:
+        restart:
+            enabled: true
+        health:
+            enabled: true
+            show-details: "always"
+        info:
+            enabled: true
+        prometheus:
+            enabled: true   
+    endpoints:
+        enabled-by-default: false
+        web:
+            base-path: '/'
+            exposure:
+                include: restart,health,info,prometheus
+
