@@ -8,6 +8,6 @@ import cl.ionix.ms.prueba.entities.UsuarioEntity;
 
 public interface IonixRepository extends CrudRepository<UsuarioEntity, Long> {
 
-	Optional<UsuarioEntity> findByEmail(String email);
+	Optional<UsuarioEntity> findByUsername(String username);
 
 }

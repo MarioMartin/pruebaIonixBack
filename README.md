@@ -1,26 +1,20 @@
-# Proyecto
 
-Proyecto Prueba para postular al equipo de Ionix
+# PROYECTO CREADO Arquetipo MS STS
+
+## Caracteristicas 
+-   Se implemento un modelo en capas para el acceso a detos  (controller - servicio - repositorio)
+-   Para el acceso de datos se implemento JPA 
+-	Para el mapeo de datos se implemento ModelMaper
+-  	Se utilizo libreria Lombok para construir clases.
+-	Se implemento seguridad mediante token JWT 
+-	Se implementaron algunas pruebas unitarias 
+-	Se utilizo bbdd oracle
+
+## Funcionalidades 
+-   Se implemento inicio de sesion
+-	Se implemento API REST CRUD
+-	se implemento file upload para subir imagenes
+-	Se imeplemento la validacion de algunos metodos con token JWT
+-	Se integro libreria swagger para auto-generar documentacion del API
 
 
-
-# Dependencias y requerimientos
-
-Se uso Lombok para los DTO y ModdelMapper para transar DTO - Entitys, el resto todo es SpringBoot, JPA y security
-
-# Modo de uso
-
-Proyecto prueba de API REST FULL con algunos metodos securitizados con token JWT 
-
-# Configuración de Secretos con Catálogo
-
-
-El secreto quedo en properties 
-```
-# Pruebas Unitarias
-
-Se hicieron algunas pruebas unitarias con mokito junit
-
-# Documentacion
-
-Se integra swagger para documentar el MS

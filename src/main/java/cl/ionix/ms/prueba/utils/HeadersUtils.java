@@ -3,17 +3,17 @@ package cl.ionix.ms.prueba.utils;
 import org.springframework.http.HttpHeaders;
 
 /**
-* Utility class for generic response headers.
-*/
+ * Utility class for generic response headers.
+ */
 public class HeadersUtils {
 
 	private HeadersUtils() {
-		/* Private Constructor will prevent the instantiation of this class directly */
+
 	};
 
 	public final static HttpHeaders getGenericHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Access-Control-Allow-Origin", "*");
+
 		headers.add("Access-Control-Allow-Methods", "*");
 		headers.add("Access-Control-Max-Age", "3600");
 		headers.add("Access-Control-Allow-Credentials", "false");

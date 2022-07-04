@@ -29,7 +29,6 @@ import cl.ionix.ms.prueba.repositories.IonixRepository;
 import cl.ionix.ms.prueba.security.JwtProvider;
 import cl.ionix.ms.prueba.services.impl.IonixServiceImpl;
 import cl.ionix.ms.prueba.utils.IonixStub;
-import cl.ionix.ms.prueba.utils.Utils;
 
 @RunWith(SpringRunner.class)
 public class IonixControllerTest {
@@ -84,9 +83,9 @@ public class IonixControllerTest {
 
 		when(repo.save(any())).thenReturn(usuarioEnty);
 
-		mvc.perform(put("/ionix/crud").contentType(MediaType.APPLICATION_JSON)
+		mvc.perform(put("/ionix/crud/1").contentType(MediaType.APPLICATION_JSON)
 				.content(IonixStub.asJsonString(IonixStub.generarRequestParaModificar()))).andDo(print())
-				.andExpect(status().isMovedPermanently());
+				.andExpect(status().isOk());
 
 		assertNotNull(serviceImpl.modifica(IonixStub.generarRequestParaModificar()));
 
@@ -102,7 +101,7 @@ public class IonixControllerTest {
 				.content(IonixStub.asJsonString(IonixStub.generarRequestParaGuardar()))).andDo(print())
 				.andExpect(status().isOk());
 
-		assertEquals(serviceImpl.añade(IonixStub.generarRequestParaGuardar()), Utils.generarOkMessageDTO());
+		assertEquals(serviceImpl.añade(IonixStub.generarRequestParaGuardar()), IonixStub.generarRequestParaGuardado());
 
 	}
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cl.ionix.ms.prueba.dtos.CreaUsuarioDTO;
 import cl.ionix.ms.prueba.dtos.ModificaUsuarioDTO;
+import cl.ionix.ms.prueba.dtos.UsuarioDTO;
 import cl.ionix.ms.prueba.entities.UsuarioEntity;
 
 public class IonixStub {
@@ -34,6 +35,18 @@ public class IonixStub {
 
 	public static CreaUsuarioDTO generarRequestParaGuardar() {
 		CreaUsuarioDTO request = new CreaUsuarioDTO();
+		request.setUsername("Rick");
+		request.setLastName("Bowie");
+		request.setEmail("mhernandez@gmail.com");
+		request.setPassword("w#e45");
+		request.setFirstName("mario");
+
+		return request;
+	}
+
+	public static UsuarioDTO generarRequestParaGuardado() {
+		UsuarioDTO request = new UsuarioDTO();
+		request.setId(1L);
 		request.setUsername("Rick");
 		request.setLastName("Bowie");
 		request.setEmail("mhernandez@gmail.com");

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,12 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import cl.ionix.ms.prueba.dtos.CreaUsuarioDTO;
-import cl.ionix.ms.prueba.dtos.DeleteUsuarioDTO;
 import cl.ionix.ms.prueba.dtos.ListUsuariosResponse;
 import cl.ionix.ms.prueba.dtos.LoginRequest;
 import cl.ionix.ms.prueba.dtos.MessageDTO;
 import cl.ionix.ms.prueba.dtos.ModificaUsuarioDTO;
-import cl.ionix.ms.prueba.dtos.TokenDTO;
 import cl.ionix.ms.prueba.dtos.UsuarioDTO;
 import cl.ionix.ms.prueba.entities.UsuarioEntity;
 import cl.ionix.ms.prueba.enums.InternalCodes;
@@ -64,13 +64,15 @@ public class IonixServiceImpl implements IonixService {
 	}
 
 	@Override
-	public MessageDTO añade(CreaUsuarioDTO req) {
+	public UsuarioDTO añade(CreaUsuarioDTO req) {
 		UsuarioEntity usuarioEntity = modelMapper.map(req, UsuarioEntity.class);
 
 		usuarioEntity.setPassword(this.passwordEncoder.encode(usuarioEntity.getPassword()));
 
-		repo.save(usuarioEntity);
-		return Utils.generarOkMessageDTO();
+		UsuarioEntity usuarioGuardadoEntity = repo.save(usuarioEntity);
+
+		UsuarioDTO usuarioGuardadoDTO = modelMapper.map(usuarioGuardadoEntity, UsuarioDTO.class);
+		return usuarioGuardadoDTO;
 	}
 
 	@Override
@@ -96,8 +98,8 @@ public class IonixServiceImpl implements IonixService {
 	}
 
 	@Override
-	public MessageDTO elimina(DeleteUsuarioDTO req) {
-		repo.deleteById(req.getId());
+	public MessageDTO elimina(Long id) {
+		repo.deleteById(id);
 		return Utils.generarOkMessageDTO();
 	}
 
@@ -106,25 +108,45 @@ public class IonixServiceImpl implements IonixService {
 	}
 
 	@Override
-	public TokenDTO login(LoginRequest req) {
+	public UsuarioDTO registrar(@Valid CreaUsuarioDTO req) throws IonixException {
 
-		TokenDTO token = new TokenDTO();
+		UsuarioEntity usuarioEntity = modelMapper.map(req, UsuarioEntity.class);
+		usuarioEntity.setPassword(this.passwordEncoder.encode(usuarioEntity.getPassword()));
 
-		Optional<UsuarioEntity> opUsuario = repo.findByEmail(req.getEmail());
+		UsuarioEntity userRegistrado = repo.save(usuarioEntity);
+		UsuarioDTO usuarioDTO = modelMapper.map(userRegistrado, UsuarioDTO.class);
+
+		String tokenJwt = jwtProvider.create(String.valueOf(userRegistrado.getId()), userRegistrado.getEmail());
+		usuarioDTO.setToken(tokenJwt);
+
+		return usuarioDTO;
+
+	}
+
+	@Override
+	public UsuarioDTO login(LoginRequest req) throws IonixException
+
+	{
+
+		Optional<UsuarioEntity> opUsuario = repo.findByUsername(req.getUsername());
 
 		if (opUsuario.isPresent()) {
 			UsuarioEntity usuarioEnty = opUsuario.get();
 
 			if (this.passwordEncoder.matches(req.getPassword(), usuarioEnty.getPassword())) {
 
-				String tokenJwt = jwtProvider.create(String.valueOf(usuarioEnty.getId()), usuarioEnty.getEmail());
-				token.setToken(tokenJwt);
-				return token;
+				UsuarioDTO usuarioDTO = modelMapper.map(usuarioEnty, UsuarioDTO.class);
 
+				String tokenJwt = jwtProvider.create(String.valueOf(usuarioEnty.getId()), usuarioEnty.getEmail());
+				usuarioDTO.setToken(tokenJwt);
+				return usuarioDTO;
+			} else {
+				throw new IonixException(Constantes.M401, 401);
 			}
+		} else {
+			throw new IonixException(Constantes.M404, 404);
 		}
 
-		return null;
 	}
 
 	@Override
@@ -137,7 +159,7 @@ public class IonixServiceImpl implements IonixService {
 
 			try {
 				Files.copy(file.getInputStream(), this.rootFolder.resolve(file.getOriginalFilename()));
-				String ruta = this.rootFolder.toFile().getAbsolutePath() + "\\" + file.getOriginalFilename();
+				String ruta = file.getOriginalFilename();
 				usuarioEntity.setAvatar(ruta);
 				repo.save(usuarioEntity);
 			} catch (IOException e) {

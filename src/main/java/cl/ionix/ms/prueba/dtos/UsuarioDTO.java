@@ -11,5 +11,7 @@ public class UsuarioDTO {
 	private String email;
 	private String username;
 	private String password;
+	private String token;
+	private String avatar;
 
 }
